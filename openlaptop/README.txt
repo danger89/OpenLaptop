@@ -4,9 +4,10 @@
 # 1.0 OVER OpenLaptop Voorkeuren
 ###################
 
-OpenLaptop Voorkeuren is een applicatie die standaard wordt meegeleverd met een OpenLaptop.
+OpenLaptop Voorkeuren is een applicatie die standaard wordt meegeleverd met een OpenLaptop systeem.
 
-Voor meer informatie, bezoek a.u.b. http://www.openlaptop.nl
+Voor meer informatie, bezoek a.u.b. onze website:
+http://www.openlaptop.nl
 
 ###################
 # 2.0 INSTALLATIE
@@ -19,16 +20,16 @@ Dependencies: python-gtk2 python-glade2
 De algemene procedure is:
 
 * Download de laatste versie
-git checkout ...
+git clone git://github.com/danger89/OpenLaptop.git
 
-* Installeer OpenLaptop Voorkeuren via het volgende command (als root)
-python setup.py install --prefix=/usr --install-layout=deb
+* Installeer OpenLaptop Voorkeuren via het volgende commando:
+sudo make install
 
 * Start het programma
-Ga naar: Systeeminstellingen->Persoonlijk->OpenLaptop Voorkeuren
+Ga naar: Systeem Instellingen->Persoonlijk->OpenLaptop Voorkeuren
 
 Of:
-Zoek naar OpenLaptop Voorkeuren in de zoekbalk van Unity Desk
+Zoek naar OpenLaptop Voorkeuren in de zoekbalk van Unity Launcher
 
 
 ###################
