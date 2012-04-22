@@ -2,7 +2,7 @@ OpenLaptop
 ==========
 
 OpenLaptop is an online webshop where you can buy laptops with Linux pre-installed.
-OpenLaptop created our own software to provide maximum service & support to the customer.
+OpenLaptop developed their own software to provide maximum service & support to their customers.
 
 All source located on this GitHub page is used for configuring and maintaining OpenLaptop systems.
 
