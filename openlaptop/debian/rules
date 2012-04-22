@@ -1,0 +1,10 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+DH_VERBOSE=1
+
+%:
+	dh $@ --buildsystem=python_distutils --with=python2
+
+clean::
+	rm -rf build build-stamp configure-stamp build/ MANIFEST
+	dh_clean

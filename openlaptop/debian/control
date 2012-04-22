@@ -1,0 +1,20 @@
+Source: openlaptop
+Section: utils
+Priority: optional
+Maintainer: Melroy van den Berg <info@openlaptop.nl>
+Build-Depends:
+    python-all,
+    python-all-dev (>= 2.6.6-3~),
+    python-setuptools,
+    python-gtk2, 
+    python-glade2,
+    debhelper (>= 7)
+X-Python-Version: >= 2.6
+Standards-Version: 3.8.1
+
+Package: openlaptop
+Architecture: all
+Homepage: http://openlaptop.nl/
+XB-Python-Version: ${python:Versions}
+Depends: ${utils:Depends}, ${python:Depends},python-gtk2,python-glade2
+Description: OpenLaptop Voorkeuren - instellingen voor OpenLaptop 

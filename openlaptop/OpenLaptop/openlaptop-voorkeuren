@@ -1,0 +1,68 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import sys, webbrowser
+try:  
+    import pygtk  
+    pygtk.require("2.0")  
+except:  
+    pass  
+try:  
+    import gtk  
+except:  
+    print("GTK Not Availible")
+    sys.exit(1)
+
+class saveSettings:
+    #####################
+    ## The init function
+    #####################
+    def __init__( self, permit_access ):
+        if permit_access:
+            print "Saving..."
+            # Try saving....
+
+class openlaptopGui:
+
+    #####################
+    ## The init function
+    #####################
+    def __init__( self ):  
+              
+        self.builder = gtk.Builder()
+        self.builder.add_from_file( self.DATA_DIR+"openlaptop-voorkeuren.ui" )
+
+        dic = { 
+            "on_apply_clicked" : self.apply,
+            "on_exit_clicked" : self.quit,
+            "on_visit_website_clicked" : self.visit_website,            
+            "on_windowMain_destroy" : self.quit,
+        }
+
+        self.builder.connect_signals( dic )
+
+    def apply(self, widget):
+        entry1 = self.builder.get_object("checkbox_permit_access")
+        try:
+            save_settings = saveSettings(entry1.get_active())
+            #Show success
+        except ValueError:
+            self.builder.get_object("errorBox").show()
+            return 0
+        self.builder.get_object("errorBox").hide()
+
+    def visit_website(self, widget):
+        new = 2 # open in a new tab, if possible
+
+        url = "http://openlaptop.nl"
+        webbrowser.open(url,new=new)
+  
+    def quit(self, widget):
+        sys.exit(0)
+
+# Define data
+openlaptopGui.DATA_DIR="/usr/share/openlaptop-voorkeuren/"
+
+# Run the main loop
+program = openlaptopGui()
+gtk.main()

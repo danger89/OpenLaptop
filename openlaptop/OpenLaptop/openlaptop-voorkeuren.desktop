@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=OpenLaptop Voorkeuren
+Comment=Configureer OpenLaptop instellingen
+Icon=openlaptop-voorkeuren
+Exec=openlaptop-voorkeuren
+Terminal=false
+Type=Application
+Categories=Application;GNOME;GTK;Settings;DesktopSettings;X-GNOME-Settings-Panel;X-GNOME-PersonalSettings
+NotShowIn=KDE;
+X-GNOME-Settings-Panel=openlaptop-voorkeuren
+Name[en_US]=OpenLaptop Voorkeuren
