@@ -9,7 +9,7 @@ All source located on this GitHub page is used for configuring and maintaining O
 
 Why should I use it?
 --------------------
-The source avaible on this GitHub page is specifically designed for OpenLaptop systems. You are free to choose it for your own use.
+The source available on this GitHub page is specifically designed for OpenLaptop systems. You are free to choose it for your own use.
 
 Installation
 -------------
