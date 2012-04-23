@@ -5,6 +5,9 @@ from urllib2 import urlopen, URLError, HTTPError
 
 # TODO: http://apt.alioth.debian.org/python-apt-doc/library/index.html
 
+# Install packages should by default True, only set it False while debugging
+INSTALL_PACKAGES=False
+
 def machine():
     """Return type of machine."""
     if os.name == 'nt' and sys.version_info[:2] < (2,7):
@@ -36,8 +39,9 @@ def dlfile(url, location):
         print "URL Error:", e.reason, url
 
 def changeHosts():
-    #Create temp file
     file = "/etc/hosts"
+
+    #Create temp file
     fh, abs_path = tempfile.mkstemp()
     new_file = open(abs_path,'w')
     host_file = open(file)
@@ -57,7 +61,9 @@ def changeHosts():
     #Move new file
     shutil.move(abs_path, file)
 
-def install():
+def install_packages():
+    success = True
+
     print "### Pre process packages ###\n"
     print "Downloading deb files..."
 
@@ -84,14 +90,20 @@ def install():
     if proc.returncode == 0:
         print "Done"
     else:
+        success = False
         print "Error!\nUpdate failed:\n", proc.stdout.read()
 
     print "Upgrade filesystem..."
     proc = subprocess.Popen('apt-get upgrade', shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
+    # Poll process for new output until finished
+    for line in iter(proc.stdout.readline, ""):
+        print line,
+
     proc.wait()
     if proc.returncode == 0:
         print "Done"
     else:
+        success = False
         print "Error!\nUpgrade failed:\n", proc.stdout.read()
 
     print "Downloading & installing packages, please wait one moment..."
@@ -104,23 +116,53 @@ def install():
     packages =  codecs + archive + language + remaining
 
     proc = subprocess.Popen('apt-get install -y ' + packages, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
+
+    # Poll process for new output until finished
+    for line in iter(proc.stdout.readline, ""):
+        print line,
+
     proc.wait()
     if proc.returncode == 0:
         print "Done"
-    else:        
+    else:      
+        success = False  
         print "Output:", proc.stdout.read()
         print "Error!\rTry exiting other package manager(s) (like Synaptic):\n", proc.stdout.read()
     print "\n\n"
-    
-    print "### Post installation configure packages ###\n"
-    print "Enable icons in Nautilus..."    
-    proc = subprocess.Popen('gconftool-2 --type Boolean --set /desktop/gnome/interface/menus_have_icons True', shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
+
+    return success
+# Using gsettings (dconf-editor) to set the settings
+def enable_icons():
+    success = True
+    # Set username
+    set_username = 'ON_USER=$(cat /etc/passwd | grep :1000: | cut -d \':\' -f 1)'
+    # Set dbus
+    set_debus_session = 'export DBUS_SESSION=$(grep -v "^#" /home/$ON_USER/.dbus/session-bus/`cat /var/lib/dbus/machine-id`-0)'
+    # Enable menu icons
+    enable_menu_icons = 'sudo -u $ON_USER $DBUS_SESSION gsettings set org.gnome.desktop.interface menus-have-icons true'
+    # Enable button icons
+    enable_button_icons = 'sudo -u $ON_USER $DBUS_SESSION gsettings set org.gnome.desktop.interface buttons-have-icons true'
+    proc = subprocess.Popen(set_username + ' && ' + set_debus_session + ' && ' + enable_menu_icons + ' && ' + enable_button_icons, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
     proc.wait()
     if proc.returncode == 0:
         print "Done"
     else:
+        success = False
         print "Error!\rCouldn't enable menu icons"
+    return success
 
+def install():
+    success = True
+
+    if INSTALL_PACKAGES:
+        success = install_packages()
+    else:
+        print "### Skipping package installation ###\n\n" 
+
+    print "### Post installation configure packages ###\n"
+
+    print "Enable icons in Nautilus..."
+    success = enable_icons()
    
     print "Configure desktop-webmail using gmail as default..." 
 
@@ -134,6 +176,7 @@ def install():
         hostname.write("OpenLaptop")
         print "Done"
     except:
+        success = False
         print "Could not write the hostname file.\nPlease check whether the file really exists or whether you have administrator rights or not."
     hostname.close()
     print "Editing host file..."
@@ -141,11 +184,16 @@ def install():
         changeHosts()
         print "Done"
     except:
+        success = False
         print "Could not write the host file.\nPlease check whether the file really exists or whether you have administrator rights or not."
     hostname.close()
 
     print "\n\n"
-    print "### Installation successfully completed! ###"  
+
+    if success:
+        print "### Installation successfully completed! ###"
+    else:
+        print "### Installation was unsuccessfully ###"
 
 if __name__ == "__main__":    
     # Check sudo rights
