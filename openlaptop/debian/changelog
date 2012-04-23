@@ -2,10 +2,10 @@ openlaptop (1.0.1~preciseubuntu5) precise; urgency=low
 
   * Moving to dh_python2.
 
- -- Melroy van den Berg <info@openlaptop.nl>  Sun, 22 Apr 2012 19:02:00 +0100
+ -- Melroy van den Berg (Desktop Sleutel) <info@openlaptop.nl>  Sun, 22 Apr 2012 19:02:00 +0100
 
 openlaptop (1.0.1~preciseubuntu4) precise; urgency=low
 
   * Initial release.
 
- -- Melroy van den Berg <info@openlaptop.nl>  Sun, 22 Apr 2012 19:02:00 +0100
+ -- Melroy van den Berg (Desktop Sleutel) <info@openlaptop.nl>  Sun, 22 Apr 2012 19:02:00 +0100
