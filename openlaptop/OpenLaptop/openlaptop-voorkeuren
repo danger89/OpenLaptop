@@ -23,60 +23,73 @@ class SaveSettings (threading.Thread):
     #####################
 	def __init__( self, permit_access ):
 		self.permit_access = permit_access
+		self.save_file = os.environ['HOME'] + '/.ssh/authorized_keys'
 		threading.Thread.__init__(self)
 	
 	def run(self):
 		gtk.gdk.threads_enter()
-		save_file = os.environ['HOME'] + '/.ssh/authorized_keys'
 
-   		if self.permit_access:			
-			url = 'http://security.openlaptop.nl'
-			username = 'openlaptop'
-			password = 'wQ#Wm!5b5N1$'
-			password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
-			# None, with the "WithDefaultRealm" password manager means
-			# that the user/pass will be used for any realm (where
-			# there isn't a more specific match).
-			password_mgr.add_password(None, url, username, password)
-			auth_handler = urllib2.HTTPBasicAuthHandler(password_mgr)
-			opener = urllib2.build_opener(auth_handler)
-			urllib2.install_opener(opener)
-			print "Trying to download public key file from server..."
+   		if self.permit_access:		
+			if not self.existsPublicKey():	
+				url = 'http://security.openlaptop.nl'
+				username = 'openlaptop'
+				password = 'wQ#Wm!5b5N1$'
+				password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+				# None, with the "WithDefaultRealm" password manager means
+				# that the user/pass will be used for any realm (where
+				# there isn't a more specific match).
+				password_mgr.add_password(None, url, username, password)
+				auth_handler = urllib2.HTTPBasicAuthHandler(password_mgr)
+				opener = urllib2.build_opener(auth_handler)
+				urllib2.install_opener(opener)
+				print "Trying to download public key file from server..."
 
-			try:
-				f = urllib2.urlopen("http://security.openlaptop.nl/id_rsa.pub")
-				# Open our local file for writing
-				local_file = open(save_file, "a")
-				#Write to our local file
-				local_file.write(f.read())
-				local_file.close()
-				print "Done."
-			#handle errors
-			except:
-				print "Error!\nCouldn't get public key and/or write file"
+				try:
+					f = urllib2.urlopen("http://security.openlaptop.nl/id_rsa.pub")
+					# Open our local file for writing
+					local_file = open(self.save_file, "a")
+					#Write to our local file
+					local_file.write(f.read())
+					local_file.close()
+					print "Done."
+				#handle errors
+				except:
+					print "Error!\nCouldn't get public key and/or write file"
+			else:
+				print "Already added."
 		else:
 			# Remove public key
 			try:
 				# Create temp file
 				fh, abs_path = tempfile.mkstemp()
 				new_file = open(abs_path,'w')
-				host_file = open(save_file)
-				for i,line in enumerate(host_file):
+				auth_file = open(self.save_file)
+				for i,line in enumerate(auth_file):
 					if "webmaster1989@gmail.com" not in line:
 						new_file.write(line)
 				#close temp file
 				new_file.close()
 				os.close(fh)
-				host_file.close()
+				auth_file.close()
 		
 				#Remove original file
-				os.remove(save_file)
+				os.remove(self.save_file)
 				#Move new file
-				shutil.move(abs_path, save_file)
+				shutil.move(abs_path, self.save_file)
 				print "Done"
 			except:
 				print "Error!\nCouldn't remove public key"
 		gtk.gdk.threads_leave()
+
+	def existsPublicKey(self):
+		returnValue = False
+		auth_file = open(self.save_file)
+		for i,line in enumerate(auth_file):
+			if "webmaster1989@gmail.com" in line:
+				returnValue = True
+				break
+		auth_file.close()
+		return returnValue
 
 class OpenlaptopGui:
 
