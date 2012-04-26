@@ -95,6 +95,10 @@ class SaveSettings (threading.Thread):
 
         return returnValue
 
+#https://accounts.google.com/SignUp?continue=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fcategory%2Fextensions%3Fhl%3Dnl
+#https://chrome.google.com/webstore/detail/gbchcmhmhahfdphkhkmpfmihenigjmpp
+#google-chrome --app-id=gbchcmhmhahfdphkhkmpfmihenigjmpp
+
 class OpenlaptopGui:
 
     #####################
@@ -102,9 +106,13 @@ class OpenlaptopGui:
     #####################
     def __init__( self ):  
               
-        self.builder = gtk.Builder()
-        self.builder.add_from_file( self.DATA_DIR+"openlaptop-voorkeuren.ui" )
+        if self.DEBUG:
+            DATA_PATH = ""
+        else:
+            DATA_PATH = self.DATA_DIR
 
+        self.builder = gtk.Builder()
+        self.builder.add_from_file( DATA_PATH + "openlaptop-voorkeuren.ui" )
         dic = { 
             "on_apply_clicked" : self.apply,
             "on_exit_clicked" : self.quit,
@@ -135,6 +143,7 @@ class OpenlaptopGui:
         sys.exit(0)
 
 # Define data
+OpenlaptopGui.DEBUG=True
 OpenlaptopGui.DATA_DIR="/usr/share/openlaptop-voorkeuren/"
 
 # Run the main loop
