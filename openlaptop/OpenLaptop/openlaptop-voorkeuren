@@ -47,6 +47,7 @@ class BrowserThread(threading.Thread, IdleObject):
         IdleObject.__init__(self)
         self.appMode = appMode
         self.url = url
+        self.returnValue = False
 
     def run(self):
         if self.appMode:
@@ -57,15 +58,15 @@ class BrowserThread(threading.Thread, IdleObject):
         proc = subprocess.Popen('google-chrome %U --enable-extensions ' + append + self.url, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
         proc.wait()
         if proc.returncode == 0:
-            return True
+            self.returnValue = True
         else:
             proc = subprocess.Popen('chromium-browser %U --enable-extensions ' + append + self.url, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
             proc.wait()
             if proc.returncode == 0:            
-                return True
-            else:
-                print "Error: No Chrome Browser installed"       
-                return False
+                self.returnValue =  True
+            else:       
+                self.returnValue = False
+        self.emit("completed")
 
 class SendMessage (threading.Thread):
 
@@ -101,11 +102,16 @@ class OpenlaptopGui:
             "on_open_faq_clicked" : self.open_faq,
             "on_step1_clicked" : self.step1,  
             "on_step2_clicked" : self.step2, 
-            "on_step3_clicked" : self.step3,           
+            "on_step3_clicked" : self.step3,  
+            "on_step4_clicked" : self.step4,           
             "on_clear_clicked" : self.clear,
             "on_send_email_clicked" : self.send_email,  
+            "on_visit_website_clicked" : self.visit_website, 
+            "on_about_us_activate" : self.about_us_dialog,
+            "on_about_dialag_close" : self.about_us_dialog_close,
+            "on_about_dialag_destroy" : self.about_us_dialog_close,
             "on_exit_clicked" : self.quit,
-            "on_visit_website_clicked" : self.visit_website,            
+            "on_exit_button_activate" : self.quit,      
             "on_windowMain_destroy" : self.quit,
         }
 
@@ -135,22 +141,29 @@ class OpenlaptopGui:
         url = "http://openlaptop.nl/ondersteuning/faq"
         webbrowser.open(url,new=new)       
 
-
     def step1(self, widget):
-        thread = BrowserThread(False, "https://accounts.google.com/SignUp?continue=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fcategory%2Fextensions%3Fhl%3Dnl")
+        thread = BrowserThread(False, "https://accounts.google.com/SignUp?continue=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fgbchcmhmhahfdphkhkmpfmihenigjmpp")
         thread.connect("completed", self.thread_finished)
         thread.start()
 
     def step2(self, widget):
-        thread = BrowserThread(False, "https://chrome.google.com/webstore/detail/gbchcmhmhahfdphkhkmpfmihenigjmpp")
+        thread = BrowserThread(False, "https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fgbchcmhmhahfdphkhkmpfmihenigjmpp")
+        thread.connect("completed", self.thread_finished)
         thread.start()
 
     def step3(self, widget):
+        thread = BrowserThread(False, "https://chrome.google.com/webstore/detail/gbchcmhmhahfdphkhkmpfmihenigjmpp")
+        thread.connect("completed", self.thread_finished)
+        thread.start()
+
+    def step4(self, widget):
         thread = BrowserThread(True, "gbchcmhmhahfdphkhkmpfmihenigjmpp")
+        thread.connect("completed", self.thread_finished)
         thread.start()
 
     def thread_finished(self, thread):
-        print "Thread done"
+        if not thread.returnValue:
+            self.show_error_no_chrome()
 
     def send_email(self, widget):
         entry1 = self.builder.get_object("name")        
@@ -188,7 +201,19 @@ class OpenlaptopGui:
 
         url = "http://openlaptop.nl"
         webbrowser.open(url,new=new)
-  
+
+    def show_error_no_chrome(self): 
+        about = self.builder.get_object("no_chrome")   
+        about.show()
+
+    def about_us_dialog(self, widget):
+        about = self.builder.get_object("about_dialag")   
+        about.show()
+
+    def about_us_dialog_close(self, widget): 
+        about = self.builder.get_object("about_dialag")   
+        about.hide()
+
     def quit(self, widget):
         sys.exit(0)
 
