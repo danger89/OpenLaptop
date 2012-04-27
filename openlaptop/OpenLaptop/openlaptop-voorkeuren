@@ -218,7 +218,7 @@ class OpenlaptopGui:
         sys.exit(0)
 
 # Define data
-OpenlaptopGui.DEBUG=True
+OpenlaptopGui.DEBUG=False
 OpenlaptopGui.DATA_DIR="/usr/share/openlaptop-voorkeuren/"
 
 # Run the main loop
