@@ -17,31 +17,55 @@ except:
     print("GTK Not Availible")
     sys.exit(1)
 
-gtk.gdk.threads_init()
+import gobject
+gobject.threads_init()
+#gtk.gdk.threads_init()
 
-def openURLChrome(appMode, url):
-    if appMode:
-        append = "--app="
-    else:
-        append = ""
-    # Todo: fix to run in background or threading should be better
-    proc = subprocess.Popen('google-chrome %U --enable-extensions ' + append + url, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
+class IdleObject(gobject.GObject):
+    """
+    Override gobject.GObject to always emit signals in the main thread
+    by emmitting on an idle handler
+    """
+    def __init__(self):
+        gobject.GObject.__init__(self)
 
-    while gtk.events_pending():
-        gtk.main_iteration()
-    #proc.wait()
-    if proc.returncode == 0:
-        return True
-    else:
-        proc = subprocess.Popen('chromium-browser %U --enable-extensions ' + append + url, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
-        while gtk.events_pending():
-            gtk.main_iteration()
-        #proc.wait()
-        if proc.returncode == 0:            
+    def emit(self, *args):
+        gobject.idle_add(gobject.GObject.emit,self,*args)
+
+class BrowserThread(threading.Thread, IdleObject):
+    """
+    Main thread gobject signals to return information
+    to the GUI.
+    """
+    __gsignals__ =  { 
+            "completed": (
+                gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, [])
+            }
+
+    def __init__(self, appMode, url):
+        threading.Thread.__init__(self)
+        IdleObject.__init__(self)
+        self.appMode = appMode
+        self.url = url
+
+    def run(self):
+        if self.appMode:
+            append = "--app="
+        else:
+            append = ""
+
+        proc = subprocess.Popen('google-chrome %U --enable-extensions ' + append + self.url, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
+        proc.wait()
+        if proc.returncode == 0:
             return True
-        else:            
-            print "Error: No Chrome Browser installed"       
-            return False
+        else:
+            proc = subprocess.Popen('chromium-browser %U --enable-extensions ' + append + self.url, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
+            proc.wait()
+            if proc.returncode == 0:            
+                return True
+            else:
+                print "Error: No Chrome Browser installed"       
+                return False
 
 class SendMessage (threading.Thread):
 
@@ -55,31 +79,6 @@ class SendMessage (threading.Thread):
         gtk.gdk.threads_enter()  
         print "Threaded"
         gtk.gdk.threads_leave()
-
-class Step1 (threading.Thread):
-
-    def run(self):
-        gtk.gdk.threads_enter() 
-        openURL = openURLChrome(False, "https://accounts.google.com/SignUp?continue=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fcategory%2Fextensions%3Fhl%3Dnl")
-        gtk.gdk.threads_leave()
-
-class Step2 (threading.Thread):
-    
-    def run(self):
-        gtk.gdk.threads_enter() 
-        openURL = openURLChrome(False, "https://chrome.google.com/webstore/detail/gbchcmhmhahfdphkhkmpfmihenigjmpp")
-        gtk.gdk.threads_leave()
-
-class Step3 (threading.Thread):
-    
-    def run(self):
-        gtk.gdk.threads_enter() 
-        openURL = openURLChrome(True, "gbchcmhmhahfdphkhkmpfmihenigjmpp")
-        gtk.gdk.threads_leave()
-
-#https://accounts.google.com/SignUp?continue=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fcategory%2Fextensions%3Fhl%3Dnl
-#https://chrome.google.com/webstore/detail/gbchcmhmhahfdphkhkmpfmihenigjmpp
-#google-chrome --app-id=gbchcmhmhahfdphkhkmpfmihenigjmpp
 
 class OpenlaptopGui:
 
@@ -136,17 +135,22 @@ class OpenlaptopGui:
         url = "http://openlaptop.nl/ondersteuning/faq"
         webbrowser.open(url,new=new)       
 
+
     def step1(self, widget):
-        step = Step1()
-        step.start()
+        thread = BrowserThread(False, "https://accounts.google.com/SignUp?continue=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fcategory%2Fextensions%3Fhl%3Dnl")
+        thread.connect("completed", self.thread_finished)
+        thread.start()
 
     def step2(self, widget):
-        step = Step2()
-        step.start()
+        thread = BrowserThread(False, "https://chrome.google.com/webstore/detail/gbchcmhmhahfdphkhkmpfmihenigjmpp")
+        thread.start()
 
     def step3(self, widget):
-        step = Step3()
-        step.start()
+        thread = BrowserThread(True, "gbchcmhmhahfdphkhkmpfmihenigjmpp")
+        thread.start()
+
+    def thread_finished(self, thread):
+        print "Thread done"
 
     def send_email(self, widget):
         entry1 = self.builder.get_object("name")        
