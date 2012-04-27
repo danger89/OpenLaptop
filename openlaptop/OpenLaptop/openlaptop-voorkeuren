@@ -50,7 +50,7 @@ class BrowserThread(threading.Thread, IdleObject):
 
     def run(self):
         if self.appMode:
-            append = "--app="
+            append = "--app-id="
         else:
             append = ""
 
