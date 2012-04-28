@@ -3,7 +3,7 @@
 #
 # file: setup.py
 #
-# Purpose: installs the OpenLaptop Voorkeuren application
+# Purpose: installs the OpenLaptop Utility
 #
 #
 ###############################################################################
@@ -24,7 +24,7 @@
 #
 ###############################################################################
 """
-The installation script of OpenLaptop Voorkeuren application.
+The installation script of OpenLaptop Utility.
 
 sudo python setup.py install --prefix=/usr --install-layout=deb
 
@@ -40,18 +40,18 @@ for f in os.path.abspath(''):
 
 setup(
     name='OpenLaptop',
-    version='1.0.1',
-    description='OpenLaptop Voorkeuren applicatie.',
+    version='1.1',
+    description='OpenLaptop Hulpprogramma.',
     author='Melroy van den Berg',
     author_email='info@openlaptop.nl',
     url='http://www.openlaptop.nl/',
-    keywords=['openlaptop', 'voorkeuren', 'openlaptop voorkeuren'],
-    scripts = ['OpenLaptop/openlaptop-voorkeuren'],       
+    keywords=['openlaptop', 'hulpprogramma', 'openlaptop hulpprogramma', 'utility'],
+    scripts = ['OpenLaptop/openlaptop-hulpprogramma'],       
     data_files=[
-        ('/usr/share/openlaptop-voorkeuren', ['OpenLaptop/openlaptop-voorkeuren.ui', 'OpenLaptop/openlaptop-voorkeuren.png']),
-        ('/usr/share/applications', ['OpenLaptop/openlaptop-voorkeuren.desktop']),
-        ('/usr/share/pixmaps', ['OpenLaptop/openlaptop-voorkeuren.png']),
-        ('/usr/share/icons', ['OpenLaptop/openlaptop-voorkeuren.png']),
+        ('/usr/share/openlaptop', ['OpenLaptop/openlaptop-hulpprogramma.ui', 'OpenLaptop/openlaptop-hulpprogramma.png']),
+        ('/usr/share/applications', ['OpenLaptop/openlaptop-hulpprogramma.desktop']),
+        ('/usr/share/pixmaps', ['OpenLaptop/openlaptop-hulpprogramma.png']),
+        ('/usr/share/icons', ['OpenLaptop/openlaptop-hulpprogramma.png']),
         ],
     license='Apache License v2',
     packages = ['OpenLaptop'],

@@ -1,0 +1,234 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import urllib2, os, shutil, tempfile
+import threading
+import sys, webbrowser, subprocess
+from subprocess import Popen, PIPE, STDOUT
+
+try:  
+    import pygtk  
+    pygtk.require("2.0")
+except:  
+    pass  
+try:  
+    import gtk  
+except:  
+    print("GTK Not Availible")
+    sys.exit(1)
+
+import gobject
+gobject.threads_init()
+#gtk.gdk.threads_init()
+
+class IdleObject(gobject.GObject):
+    """
+    Override gobject.GObject to always emit signals in the main thread
+    by emmitting on an idle handler
+    """
+    def __init__(self):
+        gobject.GObject.__init__(self)
+
+    def emit(self, *args):
+        gobject.idle_add(gobject.GObject.emit,self,*args)
+
+class BrowserThread(threading.Thread, IdleObject):
+    """
+    Main thread gobject signals to return information
+    to the GUI.
+    """
+    __gsignals__ =  { 
+            "completed": (
+                gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, [])
+            }
+
+    def __init__(self, appMode, url):
+        threading.Thread.__init__(self)
+        IdleObject.__init__(self)
+        self.appMode = appMode
+        self.url = url
+        self.returnValue = False
+
+    def run(self):
+        if self.appMode:
+            append = "--app-id="
+        else:
+            append = ""
+
+        proc = subprocess.Popen('google-chrome %U --enable-extensions ' + append + self.url, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
+        proc.wait()
+        if proc.returncode == 0:
+            self.returnValue = True
+        else:
+            proc = subprocess.Popen('chromium-browser %U --enable-extensions ' + append + self.url, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
+            proc.wait()
+            if proc.returncode == 0:            
+                self.returnValue =  True
+            else:       
+                self.returnValue = False
+        self.emit("completed")
+
+class SendMessage (threading.Thread):
+
+    def __init__( self, name, email, message):
+        threading.Thread.__init__(self)
+        self.name = name
+        self.email = email
+        self.message = message
+    
+    def run(self):
+        gtk.gdk.threads_enter()  
+        print "Threaded"
+        gtk.gdk.threads_leave()
+
+class OpenlaptopGui:
+
+    #####################
+    ## The init function
+    #####################
+    def __init__( self ):  
+              
+        if self.DEBUG:
+            DATA_PATH = ""
+        else:
+            DATA_PATH = self.DATA_DIR
+
+        self.builder = gtk.Builder()
+        self.builder.add_from_file( DATA_PATH + "openlaptop-hulpprogramma.ui" )
+        dic = { 
+            "on_open_about_us_clicked" : self.about_us,
+            "on_open_manual_clicked" : self.open_manual,
+            "on_open_customer_support_clicked" : self.open_support,
+            "on_open_faq_clicked" : self.open_faq,
+            "on_step1_clicked" : self.step1,  
+            "on_step2_clicked" : self.step2, 
+            "on_step3_clicked" : self.step3,  
+            "on_step4_clicked" : self.step4,           
+            "on_clear_clicked" : self.clear,
+            "on_send_email_clicked" : self.send_email,  
+            "on_visit_website_clicked" : self.visit_website, 
+            "on_about_us_activate" : self.show_about_us_dialog,
+            "on_about_dialag_close" : self.hide_about_us_dialog,
+            "on_about_dialag_response" : self.hide_about_us_dialog,
+            "on_no_chrome_close" : self.hide_error_no_chrome,
+            "on_no_chrome_response" : self.hide_error_no_chrome,
+            "on_exit_clicked" : self.quit,
+            "on_exit_button_activate" : self.quit,      
+            "on_windowMain_destroy" : self.quit,
+        }
+
+        self.builder.connect_signals( dic )
+
+    def about_us(self, widget):
+        new = 2 # open in a new tab, if possible
+
+        url = "http://openlaptop.nl/over-openlaptop"
+        webbrowser.open(url,new=new)  
+
+    def open_manual(self, widget):
+        new = 2 # open in a new tab, if possible
+
+        url = "http://openlaptop.nl/ondersteuning/handleiding"
+        webbrowser.open(url,new=new)  
+
+    def open_support(self, widget):
+        new = 2 # open in a new tab, if possible
+
+        url = "http://openlaptop.nl/ondersteuning"
+        webbrowser.open(url,new=new)  
+    
+    def open_faq(self, widget):
+        new = 2 # open in a new tab, if possible
+
+        url = "http://openlaptop.nl/ondersteuning/faq"
+        webbrowser.open(url,new=new)       
+
+    def step1(self, widget):
+        thread = BrowserThread(False, "https://accounts.google.com/SignUp?continue=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fgbchcmhmhahfdphkhkmpfmihenigjmpp")
+        thread.connect("completed", self.thread_finished)
+        thread.start()
+
+    def step2(self, widget):
+        thread = BrowserThread(False, "https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fgbchcmhmhahfdphkhkmpfmihenigjmpp")
+        thread.connect("completed", self.thread_finished)
+        thread.start()
+
+    def step3(self, widget):
+        thread = BrowserThread(False, "https://chrome.google.com/webstore/detail/gbchcmhmhahfdphkhkmpfmihenigjmpp")
+        thread.connect("completed", self.thread_finished)
+        thread.start()
+
+    def step4(self, widget):
+        thread = BrowserThread(True, "gbchcmhmhahfdphkhkmpfmihenigjmpp")
+        thread.connect("completed", self.thread_finished)
+        thread.start()
+
+    def thread_finished(self, thread):
+        if not thread.returnValue:
+            self.show_error_no_chrome()
+
+    def send_email(self, widget):
+        entry1 = self.builder.get_object("name")        
+        entry2 = self.builder.get_object("email")
+        entry3 = self.builder.get_object("message")
+        message_buffer = entry3.get_buffer()
+        start, end = message_buffer.get_bounds()
+        try:
+            send_message = SendMessage(entry1.get_text(), entry2.get_text(), message_buffer.get_text(start, end))
+            send_message.start()
+            
+            send_email_button = self.builder.get_object("send_email")
+            send_email_button.set_sensitive(False) # disable send button
+            #Show success
+        except ValueError:            
+            send_email_button = self.builder.get_object("send_email")
+            send_email_button.set_sensitive(True)
+            self.builder.get_object("errorBox").show()
+            return 0
+        self.builder.get_object("errorBox").hide()
+
+
+    def clear(self, widget):
+        entry1 = self.builder.get_object("name")        
+        entry2 = self.builder.get_object("email")
+        entry3 = self.builder.get_object("message")
+        entry4 = self.builder.get_object("send_email")
+        entry1.set_text("")
+        entry2.set_text("")
+        entry3.get_buffer().set_text("")
+        entry4.set_sensitive(True)
+
+    def visit_website(self, widget):
+        new = 2 # open in a new tab, if possible
+
+        url = "http://openlaptop.nl"
+        webbrowser.open(url,new=new)
+
+    def show_error_no_chrome(self):
+        no_chrome = self.builder.get_object("no_chrome")
+        no_chrome.run()
+
+    def hide_error_no_chrome(self, widget, response):
+        if response == gtk.RESPONSE_DELETE_EVENT or gtk.RESPONSE_CLOSE:
+            no_chrome = self.builder.get_object("no_chrome")
+            no_chrome.hide()
+
+    def show_about_us_dialog(self, widget):
+        about = self.builder.get_object("about_dialog")   
+        about.run()
+
+    def hide_about_us_dialog(self, widget, response):
+        if response == gtk.RESPONSE_DELETE_EVENT or gtk.RESPONSE_CANCEL:
+            about = self.builder.get_object("about_dialog")  
+            about.hide()
+
+    def quit(self, widget):
+        sys.exit(0)
+
+# Define data
+OpenlaptopGui.DEBUG=False
+OpenlaptopGui.DATA_DIR="/usr/share/openlaptop/"
+
+# Run the main loop
+program = OpenlaptopGui()
+gtk.main()

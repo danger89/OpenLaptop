@@ -1,0 +1,880 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="2.24"/>
+  <!-- interface-naming-policy project-wide -->
+  <object class="GtkAboutDialog" id="about_dialog">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">Over OpenLaptop</property>
+    <property name="window_position">center-on-parent</property>
+    <property name="icon">openlaptop-hulpprogramma.png</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">windowMain</property>
+    <property name="opacity">0.90000000000000002</property>
+    <property name="program_name">OpenLaptop</property>
+    <property name="version">v1.0</property>
+    <property name="copyright" translatable="yes">© Copyright 2011-2012 Melroy van den Berg</property>
+    <property name="comments" translatable="yes">Bedankt dat u gekozen heeft voor OpenLaptop.
+
+OpenLaptop is een bedrijf die Laptops verkoopt met Linux
+erop geïnstalleerd.
+
+Met OpenLaptop Voorkeuren is het mogelijk om 
+uw voorkeuren betreffende OpenLaptop te wijzigen.</property>
+    <property name="website">www.openlaptop.nl</property>
+    <property name="website_label" translatable="yes">Bezoek onze website</property>
+    <property name="license" translatable="yes">GNU Licence</property>
+    <property name="translator_credits" translatable="yes">Vincent Kriek</property>
+    <property name="logo">openlaptop-hulpprogramma.png</property>
+    <signal name="close" handler="on_about_dialag_close" swapped="no"/>
+    <signal name="response" handler="on_about_dialag_response" swapped="no"/>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkMessageDialog" id="no_chrome">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">Geen Chrome webbrowser gevonden</property>
+    <property name="window_position">center</property>
+    <property name="icon">openlaptop-hulpprogramma.png</property>
+    <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="transient_for">windowMain</property>
+    <property name="message_type">error</property>
+    <property name="buttons">close</property>
+    <property name="text" translatable="yes">U heeft geen Chrome Browser geïnstalleerd.</property>
+    <property name="secondary_text" translatable="yes">Zoek in het Ubuntu Softwarecentrum op Chromium óf download Google Chrome via http://google.com/chrome.</property>
+    <signal name="close" handler="on_no_chrome_close" swapped="no"/>
+    <signal name="response" handler="on_no_chrome_response" swapped="no"/>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="windowMain">
+    <property name="width_request">620</property>
+    <property name="height_request">500</property>
+    <property name="visible">True</property>
+    <property name="can_focus">True</property>
+    <property name="title" translatable="yes">OpenLaptop Hulpprogramma</property>
+    <property name="window_position">center</property>
+    <property name="icon">openlaptop-hulpprogramma.png</property>
+    <signal name="destroy" handler="on_windowMain_destroy" swapped="no"/>
+    <child>
+      <object class="GtkVBox" id="vbox1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkMenuBar" id="mainMenuBar">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkMenuItem" id="menuitem1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="label" translatable="yes">_File</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="exit_button">
+                        <property name="label">gtk-quit</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_exit_button_activate" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="menuitem4">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="label" translatable="yes">_Help</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu3">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="about_us">
+                        <property name="label">gtk-about</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_about_us_activate" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkNotebook" id="notebook1">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="border_width">2</property>
+            <child>
+              <object class="GtkVBox" id="vbox5">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkLabel" id="label8">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="xalign">0.029999999329447746</property>
+                    <property name="label" translatable="yes">OpenLaptop ondersteuningspagina's:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="padding">12</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkVBox" id="vbox10">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkAspectFrame" id="aspectframe3">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label_xalign">0</property>
+                        <property name="shadow_type">none</property>
+                        <child>
+                          <object class="GtkVBox" id="vbox11">
+                            <property name="width_request">300</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="spacing">20</property>
+                            <child>
+                              <object class="GtkButton" id="open_faq">
+                                <property name="label" translatable="yes">FAQ: Veel gestelde vragen</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="use_action_appearance">False</property>
+                                <child internal-child="accessible">
+                                  <object class="AtkObject" id="open_faq-atkobject">
+                                    <property name="AtkObject::accessible-name" translatable="yes">faq</property>
+                                    <property name="AtkObject::accessible-description" translatable="yes">Veel gestelde vragen</property>
+                                  </object>
+                                </child>
+                                <signal name="clicked" handler="on_open_faq_clicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="padding">6</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="open_customer_support">
+                                <property name="label" translatable="yes">Klantenservice</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="use_action_appearance">False</property>
+                                <child internal-child="accessible">
+                                  <object class="AtkObject" id="open_customer_support-atkobject">
+                                    <property name="AtkObject::accessible-name" translatable="yes">support</property>
+                                    <property name="AtkObject::accessible-description" translatable="yes">Klantenservice</property>
+                                  </object>
+                                </child>
+                                <signal name="clicked" handler="on_open_customer_support_clicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="padding">6</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="open_manual">
+                                <property name="label" translatable="yes">Download Handleiding OpenLaptop</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="use_action_appearance">False</property>
+                                <child internal-child="accessible">
+                                  <object class="AtkObject" id="open_manual-atkobject">
+                                    <property name="AtkObject::accessible-name" translatable="yes">handleiding</property>
+                                    <property name="AtkObject::accessible-description" translatable="yes">Download de hanleding</property>
+                                  </object>
+                                </child>
+                                <signal name="clicked" handler="on_open_manual_clicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="padding">6</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="open_about_us">
+                                <property name="label" translatable="yes">Over Ons</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="use_action_appearance">False</property>
+                                <child internal-child="accessible">
+                                  <object class="AtkObject" id="open_about_us-atkobject">
+                                    <property name="AtkObject::accessible-name" translatable="yes">over</property>
+                                    <property name="AtkObject::accessible-description" translatable="yes">Over OpenLaptop</property>
+                                  </object>
+                                </child>
+                                <signal name="clicked" handler="on_open_about_us_clicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="padding">6</property>
+                                <property name="position">3</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="padding">8</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label4">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Support</property>
+              </object>
+              <packing>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVBox" id="vbox2">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkLabel" id="header_text">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="xalign">0.029999999329447746</property>
+                    <property name="label" translatable="yes">OpenLaptop Extern Bureaublad:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="padding">12</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkAspectFrame" id="aspectframe1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkVBox" id="vbox3">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="border_width">6</property>
+                        <child>
+                          <object class="GtkLabel" id="label9">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="xalign">0.05000000074505806</property>
+                            <property name="label" translatable="yes">Voer de volgende 4 stappen uit:</property>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="padding">6</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkAspectFrame" id="aspectframe2">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label_xalign">0</property>
+                            <property name="shadow_type">none</property>
+                            <child>
+                              <object class="GtkVBox" id="vbox4">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkHBox" id="hbox2">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="spacing">45</property>
+                                    <child>
+                                      <object class="GtkButton" id="create_google_account">
+                                        <property name="label" translatable="yes">1. Maak een Google account aan</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="use_action_appearance">False</property>
+                                        <property name="xalign">0</property>
+                                        <child internal-child="accessible">
+                                          <object class="AtkObject" id="create_google_account-atkobject">
+                                            <property name="AtkObject::accessible-name" translatable="yes">aanmaken</property>
+                                            <property name="AtkObject::accessible-description" translatable="yes">Google account aanmaken</property>
+                                          </object>
+                                        </child>
+                                        <signal name="clicked" handler="on_step1_clicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkVSeparator" id="vseparator1">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="login_google">
+                                        <property name="label" translatable="yes">2. Login met Google Account</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                        <property name="use_action_appearance">False</property>
+                                        <property name="xalign">0</property>
+                                        <child internal-child="accessible">
+                                          <object class="AtkObject" id="login_google-atkobject">
+                                            <property name="AtkObject::accessible-name" translatable="yes">inloggen</property>
+                                            <property name="AtkObject::accessible-description" translatable="yes">Inloggen met het Google account</property>
+                                          </object>
+                                        </child>
+                                        <signal name="clicked" handler="on_step2_clicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="padding">12</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkHSeparator" id="hseparator1">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="add_remote_desktop_extension">
+                                    <property name="label" translatable="yes">3. Voeg "Chrome Remote Desktop" extensie toe aan de Chrome webbrowser</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <property name="xalign">0</property>
+                                    <child internal-child="accessible">
+                                      <object class="AtkObject" id="add_remote_desktop_extension-atkobject">
+                                        <property name="AtkObject::accessible-name" translatable="yes">toevoegen</property>
+                                        <property name="AtkObject::accessible-description" translatable="yes">Voeg de Chrome Remote Desktop extensie toe aan Chrome</property>
+                                      </object>
+                                    </child>
+                                    <signal name="clicked" handler="on_step3_clicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="padding">12</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkHSeparator" id="hseparator2">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="start_remote_desktop">
+                                    <property name="label" translatable="yes">4. Start Chrome Remote Desktop</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="use_action_appearance">False</property>
+                                    <property name="xalign">0</property>
+                                    <child internal-child="accessible">
+                                      <object class="AtkObject" id="start_remote_desktop-atkobject">
+                                        <property name="AtkObject::accessible-name" translatable="yes">start</property>
+                                        <property name="AtkObject::accessible-description" translatable="yes">Start Chrome Remote Desktop applicatie</property>
+                                      </object>
+                                    </child>
+                                    <signal name="clicked" handler="on_step4_clicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="padding">12</property>
+                                    <property name="position">4</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="padding">4</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="padding">10</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkHBox" id="infoBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImage" id="image2">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">0.80000001192092896</property>
+                        <property name="stock">gtk-dialog-info</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="padding">14</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label11">
+                        <property name="width_request">550</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">De bovenstaande stappen hoeven enkel uitgevoerd te worden in overleg met OpenLaptop.</property>
+                        <property name="wrap">True</property>
+                        <property name="wrap_mode">word-char</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="padding">5</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="padding">15</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label5">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Extern Bureaublad</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVBox" id="vbox6">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkLabel" id="label12">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="xalign">0.029999999329447746</property>
+                    <property name="label" translatable="yes">Contacteer ons via ons contact formulier bij eventuele vragen of opmerkingen:</property>
+                    <property name="wrap">True</property>
+                    <property name="wrap_mode">word-char</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="padding">12</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkTable" id="table1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="n_rows">4</property>
+                    <property name="n_columns">2</property>
+                    <property name="column_spacing">4</property>
+                    <property name="row_spacing">4</property>
+                    <child>
+                      <object class="GtkLabel" id="label13">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">1</property>
+                        <property name="label" translatable="yes">Naam:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label14">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">1</property>
+                        <property name="label" translatable="yes">E-mailadres:</property>
+                      </object>
+                      <packing>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label15">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">1</property>
+                        <property name="yalign">0</property>
+                        <property name="label" translatable="yes">Bericht:</property>
+                      </object>
+                      <packing>
+                        <property name="top_attach">2</property>
+                        <property name="bottom_attach">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="name">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="can_default">True</property>
+                        <property name="invisible_char">•</property>
+                        <property name="shadow_type">out</property>
+                        <property name="primary_icon_activatable">False</property>
+                        <property name="secondary_icon_activatable">False</property>
+                        <property name="primary_icon_sensitive">True</property>
+                        <property name="secondary_icon_sensitive">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="x_padding">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="email">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="invisible_char">•</property>
+                        <property name="primary_icon_activatable">False</property>
+                        <property name="secondary_icon_activatable">False</property>
+                        <property name="primary_icon_sensitive">True</property>
+                        <property name="secondary_icon_sensitive">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                        <property name="x_padding">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkHButtonBox" id="hbuttonbox2">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkButton" id="clear">
+                            <property name="label">gtk-clear</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="use_stock">True</property>
+                            <signal name="clicked" handler="on_clear_clicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="send_email">
+                            <property name="label">gtk-ok</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="use_stock">True</property>
+                            <signal name="clicked" handler="on_send_email_clicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">3</property>
+                        <property name="bottom_attach">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScrolledWindow" id="scrolledwindow1">
+                        <property name="width_request">480</property>
+                        <property name="height_request">200</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="border_width">8</property>
+                        <property name="hscrollbar_policy">automatic</property>
+                        <property name="vscrollbar_policy">automatic</property>
+                        <property name="shadow_type">out</property>
+                        <child>
+                          <object class="GtkTextView" id="message">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="wrap_mode">word</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">2</property>
+                        <property name="bottom_attach">3</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="padding">6</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkHBox" id="errorBox">
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImage" id="image1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="stock">gtk-dialog-warning</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="padding">25</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label17">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">0.05000000074505806</property>
+                        <property name="label" translatable="yes">Er is iets fout gegaan bij het versturen van de e-mail, 
+probeer het nogmaals a.u.b.</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="padding">30</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label3">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Contact</property>
+              </object>
+              <packing>
+                <property name="position">2</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHButtonBox" id="hbuttonbox1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="border_width">4</property>
+            <child>
+              <object class="GtkButton" id="exit">
+                <property name="label">gtk-quit</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+                <signal name="clicked" handler="on_exit_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label16">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">
+</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="padding">10</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

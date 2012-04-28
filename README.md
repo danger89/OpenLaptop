@@ -14,7 +14,7 @@ The source available on this GitHub page is specifically designed for OpenLaptop
 Installation
 -------------
 
-1. Download the source from /openlaptop 
+1. Download the source from /openlaptop directory
 2. sudo make install
 
 
@@ -26,9 +26,9 @@ Or grab the Ubuntu PPA of the OpenLaptop software:
 Usage
 -------------
 You can either start the application via command-line:
-openlaptop-voorkeuren
+openlaptop-hulpprogramma
 
-Or search for "OpenLaptop Voorkeuren" in the Unity Launcher. You can also find 'OpenLaptop Voorkeuren' under System Settings of Ubuntu.
+Or search for "OpenLaptop Hulpprogramma" in the Unity Launcher. You can also find 'OpenLaptop Hulpprogramma' under System Settings of Ubuntu.
 
 
 

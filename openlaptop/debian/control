@@ -17,4 +17,4 @@ Architecture: all
 Homepage: http://openlaptop.nl/
 XB-Python-Version: ${python:Versions}
 Depends: ${utils:Depends}, ${python:Depends},python-gtk2,python-glade2
-Description: OpenLaptop Voorkeuren - instellingen voor OpenLaptop 
+Description: OpenLaptop Hulpprogramma - Hulpprogramma voor OpenLaptop 
