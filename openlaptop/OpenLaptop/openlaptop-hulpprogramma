@@ -5,6 +5,11 @@ import urllib2, os, shutil, tempfile
 import threading
 import sys, webbrowser, subprocess
 from subprocess import Popen, PIPE, STDOUT
+import smtplib
+from smtplib import SMTPException
+from datetime import datetime
+from email.mime.text import MIMEText
+import base64, re
 
 try:  
     import pygtk  
@@ -33,10 +38,7 @@ class IdleObject(gobject.GObject):
         gobject.idle_add(gobject.GObject.emit,self,*args)
 
 class BrowserThread(threading.Thread, IdleObject):
-    """
-    Main thread gobject signals to return information
-    to the GUI.
-    """
+
     __gsignals__ =  { 
             "completed": (
                 gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, [])
@@ -68,18 +70,85 @@ class BrowserThread(threading.Thread, IdleObject):
                 self.returnValue = False
         self.emit("completed")
 
-class SendMessage (threading.Thread):
+class SendMessage (threading.Thread, IdleObject):
+
+    __gsignals__ =  { 
+            "error": (
+                gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, []),
+            "success": (
+                gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, [])
+            }
 
     def __init__( self, name, email, message):
         threading.Thread.__init__(self)
+        IdleObject.__init__(self)
         self.name = name
         self.email = email
         self.message = message
-    
+        self.error_message = ""
+
+    def validateEmail(self, email):
+        #self.email_re = re.compile(
+        #    r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"  # dot-atom
+        #    r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' # quoted-string
+        #    r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)  # domain
+	    if re.match("^[a-zA-Z0-9._%-]+@[a-zA-Z0-9._%-]+.[a-zA-Z]{2,6}$", email) != None:
+		    return True
+	    return False
+
     def run(self):
-        gtk.gdk.threads_enter()  
-        print "Threaded"
-        gtk.gdk.threads_leave()
+        if not self.name:
+            self.error_message = "Geef a.u.b. uw naam op."
+            self.emit("error")
+        elif not self.email:
+            self.error_message = "Vul a.u.b. uw e-mail adres in."
+            self.emit("error")
+        elif not self.validateEmail(self.email):
+            self.error_message = "Uw e-mailadres is niet geldig, probeer het nogmaals a.u.b."
+            self.emit("error")
+        elif not self.message:
+            self.error_message = "Schrijf een bericht a.u.b."
+            self.emit("error")
+        else:
+            # Info
+            sender = self.email
+            receivers = ['info@openlaptop.nl']
+            usr = 'contact.openlaptop@gmail.com'
+            ciph = 'd3pqa3lvcGxpenZoaHFkaw=='
+            pwd = base64.b64decode(ciph)
+            text_subtype = 'plain'
+
+            gtk.gdk.threads_enter()
+            pub_ip = urllib2.urlopen("http://automation.whatismyip.com/n09230945.asp").read()
+            content = self.message + "\n\r\n\rVerzonden vanaf IP-adres: " + pub_ip
+
+            # Create e-mail
+            message = MIMEText(content, text_subtype)
+            message['Date'] = datetime.strftime(datetime.now(), '%Y-%m-%d')
+            message['Subject'] = 'OpenLaptop - Contact'
+            message['From'] = self.name        
+            message['Reply-to'] = self.email
+            message['To'] = "Melroy van den Berg <info@openlaptop.nl>"
+
+            try:
+                # Initialize SMTP server
+                server=smtplib.SMTP('smtp.gmail.com:587')
+                server.starttls()
+                server.login(usr,pwd)
+
+                # Send mail
+                server.sendmail(sender, receivers, message.as_string())   
+                server.quit()
+       
+                self.emit("success")
+            except SMTPException:            
+                self.error_message = "Sorry, de e-mail kon niet verzonden worden. Probeer het nogmaals a.u.b."
+                self.emit("error")
+            except:                
+                self.error_message = "Sorry, de e-mail kon niet verzonden worden. Probeer het nogmaals a.u.b."
+                self.emit("error")
+
+            gtk.gdk.threads_leave()
 
 class OpenlaptopGui:
 
@@ -96,22 +165,31 @@ class OpenlaptopGui:
         self.builder = gtk.Builder()
         self.builder.add_from_file( DATA_PATH + "openlaptop-hulpprogramma.ui" )
         dic = { 
+            # Support pages
             "on_open_about_us_clicked" : self.about_us,
             "on_open_manual_clicked" : self.open_manual,
             "on_open_customer_support_clicked" : self.open_support,
             "on_open_faq_clicked" : self.open_faq,
+            # Remote desktop
             "on_step1_clicked" : self.step1,  
             "on_step2_clicked" : self.step2, 
             "on_step3_clicked" : self.step3,  
-            "on_step4_clicked" : self.step4,           
+            "on_step4_clicked" : self.step4,    
+            # Contact email
             "on_clear_clicked" : self.clear,
             "on_send_email_clicked" : self.send_email,  
             "on_visit_website_clicked" : self.visit_website, 
             "on_about_us_activate" : self.show_about_us_dialog,
+            # Dialogs
             "on_about_dialag_close" : self.hide_about_us_dialog,
             "on_about_dialag_response" : self.hide_about_us_dialog,
-            "on_no_chrome_close" : self.hide_error_no_chrome,
-            "on_no_chrome_response" : self.hide_error_no_chrome,
+            "on_no_chrome_close" : self.hide_no_chrome_error,
+            "on_no_chrome_response" : self.hide_no_chrome_error,
+            "on_email_success_close" : self.hide_send_email_success,
+            "on_email_success_response" : self.hide_send_email_success,
+            "on_email_error_close" : self.hide_send_email_error,
+            "on_email_error_response" : self.hide_send_email_error,
+            # Exit
             "on_exit_clicked" : self.quit,
             "on_exit_button_activate" : self.quit,      
             "on_windowMain_destroy" : self.quit,
@@ -175,18 +253,37 @@ class OpenlaptopGui:
         start, end = message_buffer.get_bounds()
         try:
             send_message = SendMessage(entry1.get_text(), entry2.get_text(), message_buffer.get_text(start, end))
+            send_message.connect("success", self.show_send_email_success)
+            send_message.connect("error", self.show_send_email_error)
             send_message.start()
-            
+            # Disable send button
             send_email_button = self.builder.get_object("send_email")
-            send_email_button.set_sensitive(False) # disable send button
-            #Show success
-        except ValueError:            
-            send_email_button = self.builder.get_object("send_email")
-            send_email_button.set_sensitive(True)
-            self.builder.get_object("errorBox").show()
+            send_email_button.set_sensitive(False) 
+        except ValueError:
+            print "Value error"
             return 0
-        self.builder.get_object("errorBox").hide()
 
+    def show_send_email_success(self, thread):
+        email_error = self.builder.get_object("email_success")
+        email_error.run()
+
+    def hide_send_email_success(self, widget, response): 
+        if response == gtk.RESPONSE_DELETE_EVENT or gtk.RESPONSE_OK:       
+            email_error = self.builder.get_object("email_success")
+            email_error.hide()
+
+    def show_send_email_error(self, thread):                
+        send_email_button = self.builder.get_object("send_email")
+        send_email_button.set_sensitive(True)
+        email_error = self.builder.get_object("email_error")
+        email_error.format_secondary_text(thread.error_message)
+        email_error.run()
+
+    def hide_send_email_error(self, widget, response):
+        if response == gtk.RESPONSE_DELETE_EVENT or gtk.RESPONSE_CLOSE:
+            email_error = self.builder.get_object("email_error")
+            email_error.format_secondary_text("")
+            email_error.hide()
 
     def clear(self, widget):
         entry1 = self.builder.get_object("name")        
@@ -204,11 +301,11 @@ class OpenlaptopGui:
         url = "http://openlaptop.nl"
         webbrowser.open(url,new=new)
 
-    def show_error_no_chrome(self):
+    def show_no_chrome_error(self):
         no_chrome = self.builder.get_object("no_chrome")
         no_chrome.run()
 
-    def hide_error_no_chrome(self, widget, response):
+    def hide_no_chrome_error(self, widget, response):
         if response == gtk.RESPONSE_DELETE_EVENT or gtk.RESPONSE_CLOSE:
             no_chrome = self.builder.get_object("no_chrome")
             no_chrome.hide()
@@ -226,7 +323,7 @@ class OpenlaptopGui:
         sys.exit(0)
 
 # Define data
-OpenlaptopGui.DEBUG=False
+OpenlaptopGui.DEBUG=True
 OpenlaptopGui.DATA_DIR="/usr/share/openlaptop/"
 
 # Run the main loop
