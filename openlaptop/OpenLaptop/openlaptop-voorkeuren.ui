@@ -2,7 +2,7 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
-  <object class="GtkAboutDialog" id="about_dialag">
+  <object class="GtkAboutDialog" id="about_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Over OpenLaptop</property>
@@ -27,7 +27,7 @@ uw voorkeuren betreffende OpenLaptop te wijzigen.</property>
     <property name="translator_credits" translatable="yes">Vincent Kriek</property>
     <property name="logo">openlaptop-voorkeuren.png</property>
     <signal name="close" handler="on_about_dialag_close" swapped="no"/>
-    <signal name="destroy" handler="on_about_dialag_destroy" swapped="no"/>
+    <signal name="response" handler="on_about_dialag_response" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
@@ -64,6 +64,8 @@ uw voorkeuren betreffende OpenLaptop te wijzigen.</property>
     <property name="buttons">close</property>
     <property name="text" translatable="yes">U heeft geen Chrome Browser geïnstalleerd.</property>
     <property name="secondary_text" translatable="yes">Zoek in het Ubuntu Softwarecentrum op Chromium óf download Google Chrome via http://google.com/chrome.</property>
+    <signal name="close" handler="on_no_chrome_close" swapped="no"/>
+    <signal name="response" handler="on_no_chrome_response" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox">
         <property name="visible">True</property>

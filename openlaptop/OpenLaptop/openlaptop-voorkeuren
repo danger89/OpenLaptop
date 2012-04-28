@@ -107,9 +107,11 @@ class OpenlaptopGui:
             "on_clear_clicked" : self.clear,
             "on_send_email_clicked" : self.send_email,  
             "on_visit_website_clicked" : self.visit_website, 
-            "on_about_us_activate" : self.about_us_dialog,
-            "on_about_dialag_close" : self.about_us_dialog_close,
-            "on_about_dialag_destroy" : self.about_us_dialog_close,
+            "on_about_us_activate" : self.show_about_us_dialog,
+            "on_about_dialag_close" : self.hide_about_us_dialog,
+            "on_about_dialag_response" : self.hide_about_us_dialog,
+            "on_no_chrome_close" : self.hide_error_no_chrome,
+            "on_no_chrome_response" : self.hide_error_no_chrome,
             "on_exit_clicked" : self.quit,
             "on_exit_button_activate" : self.quit,      
             "on_windowMain_destroy" : self.quit,
@@ -202,23 +204,29 @@ class OpenlaptopGui:
         url = "http://openlaptop.nl"
         webbrowser.open(url,new=new)
 
-    def show_error_no_chrome(self): 
-        about = self.builder.get_object("no_chrome")   
-        about.show()
+    def show_error_no_chrome(self):
+        no_chrome = self.builder.get_object("no_chrome")
+        no_chrome.run()
 
-    def about_us_dialog(self, widget):
-        about = self.builder.get_object("about_dialag")   
-        about.show()
+    def hide_error_no_chrome(self, widget, response):
+        if response == gtk.RESPONSE_DELETE_EVENT or gtk.RESPONSE_CLOSE:
+            no_chrome = self.builder.get_object("no_chrome")
+            no_chrome.hide()
 
-    def about_us_dialog_close(self, widget): 
-        about = self.builder.get_object("about_dialag")   
-        about.hide()
+    def show_about_us_dialog(self, widget):
+        about = self.builder.get_object("about_dialog")   
+        about.run()
+
+    def hide_about_us_dialog(self, widget, response):
+        if response == gtk.RESPONSE_DELETE_EVENT or gtk.RESPONSE_CANCEL:
+            about = self.builder.get_object("about_dialog")  
+            about.hide()
 
     def quit(self, widget):
         sys.exit(0)
 
 # Define data
-OpenlaptopGui.DEBUG=False
+OpenlaptopGui.DEBUG=True
 OpenlaptopGui.DATA_DIR="/usr/share/openlaptop-voorkeuren/"
 
 # Run the main loop
