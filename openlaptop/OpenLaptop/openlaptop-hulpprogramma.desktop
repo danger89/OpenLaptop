@@ -10,3 +10,4 @@ Categories=Application;GNOME;GTK;Settings;DesktopSettings;X-GNOME-Settings-Panel
 NotShowIn=KDE;
 X-GNOME-Settings-Panel=openlaptop-hulpprogramma
 Name[en_US]=OpenLaptop Utility
+Name[nl_NL]=OpenLaptop Hulpprogramma

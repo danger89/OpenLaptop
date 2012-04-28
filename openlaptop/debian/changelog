@@ -1,3 +1,15 @@
+openlaptop (1.1.1~preciseubuntu2) precise; urgency=low
+
+  * Dutch application name added to the .desktop file
+
+ -- Melroy van den Berg <info@openlaptop.nl>  Sun, 29 Apr 2012 00:36:00 +0100
+
+openlaptop (1.1.1~preciseubuntu1) precise; urgency=low
+
+  * Contact form completely working
+
+ -- Melroy van den Berg <info@openlaptop.nl>  Sun, 29 Apr 2012 00:18:00 +0100
+
 openlaptop (1.1) precise; urgency=low
 
   * Renamed to OpenLaptop Hulpprogramma

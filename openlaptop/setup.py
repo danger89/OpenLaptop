@@ -40,7 +40,7 @@ for f in os.path.abspath(''):
 
 setup(
     name='OpenLaptop',
-    version='1.1',
+    version='1.1.1',
     description='OpenLaptop Hulpprogramma.',
     author='Melroy van den Berg',
     author_email='info@openlaptop.nl',
