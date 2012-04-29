@@ -26,7 +26,7 @@ except:
 
 import gobject
 gobject.threads_init()
-gtk.gdk.threads_init()
+#gtk.gdk.threads_init()
 
 class IdleObject(gobject.GObject):
     """
@@ -120,7 +120,6 @@ class SendMessage (threading.Thread, IdleObject):
             pwd = base64.b64decode(ciph)
             text_subtype = 'plain'
 
-            gtk.gdk.threads_enter()
             pub_ip = urllib2.urlopen("http://automation.whatismyip.com/n09230945.asp").read()
             content = self.message + "\n\r\n\rVerzonden vanaf IP-adres: " + pub_ip
 
@@ -149,8 +148,6 @@ class SendMessage (threading.Thread, IdleObject):
             except:                
                 self.error_message = "Sorry, de e-mail kon niet verzonden worden. Probeer het nogmaals a.u.b."
                 self.emit("error")
-
-            gtk.gdk.threads_leave()
 
 #http://oreilly.com/pub/h/1968
 class IRCClient (threading.Thread, IdleObject):
@@ -222,7 +219,9 @@ class IRCClient (threading.Thread, IdleObject):
                         self.socket.send('privmsg ' + self.channel + ' :\x01ACTION ' + self.welcome_message + '\x01\n')                    
                         self.emit("connected")
                     elif line.find('Nickname is already in use.') != -1:
-                        self.error_message = "Uw bijnaam is al in gebruik, probeer a.u.b. een andere naam."
+                        self.message = "Uw gekozen bijnaam is al in gebruik, kies a.u.b. een andere naam.\r\n"
+                        self.emit("message")
+                        self.error_message = "Uw gekozen bijnaam is al in gebruik, kies a.u.b. een andere naam."
                         self.emit("error")
                         break
                     elif line.find('PRIVMSG ' + self.nickname) != -1:            
@@ -288,7 +287,6 @@ class OpenlaptopGui:
             "on_irc_error_close" : self.hide_irc_error,
             "on_irc_error_response" : self.hide_irc_error,
             # Exit
-            "on_windowMain_delete_event" : self.quitEvent,
             "on_exit_clicked" : self.quit,
             "on_exit_button_activate" : self.quit,      
             "on_windowMain_destroy" : self.quit,
@@ -430,9 +428,7 @@ class OpenlaptopGui:
             about.hide()
 
     def irc_error(self, thread):
-        irc_error = self.builder.get_object("irc_error")
-        irc_error.format_secondary_text(thread.error_message)
-        irc_error.run()
+        self.show_irc_error(thread.error_message)
 
     def show_irc_error(self, message):
         irc_error = self.builder.get_object("irc_error")
@@ -460,6 +456,7 @@ class OpenlaptopGui:
         self.append_text_chat("Verbonden!\r\n")
 
     def irc_disconnected(self, thread):
+        self.ircClient = None
         entry1 = self.builder.get_object("chat_message")
         entry2 = self.builder.get_object("send_chat_message")
         entry3 = self.builder.get_object("irc_connect")
@@ -467,13 +464,13 @@ class OpenlaptopGui:
         entry5 = self.builder.get_object("nickname")
         entry1.set_sensitive(False)
         entry2.set_sensitive(False)
+        entry3.set_sensitive(True)
         entry3.show()
         entry4.hide()
         entry5.set_sensitive(True)
         self.append_text_chat("Verbinding is verbroken met de server.\r\n")
 
     def irc_message(self, thread):
-        print "Append"
         self.append_text_chat(thread.message)
     
     def irc_disconnect(self, widget):
@@ -484,15 +481,20 @@ class OpenlaptopGui:
         nickname = nickname.get_text()
         if not nickname:
             self.show_irc_error("Vul a.u.b. uw bijnaam in.") 
+        elif self.ircClient is not None:
+            self.append_text_chat("Chat sessie wordt al opgezet...\r\n")     
         else:
             try:
                 self.ircClient = IRCClient('irc.freenode.net', 6667, '#openlaptop', nickname)
-                #self.ircClient.daemon=True
+                self.ircClient.daemon=True
                 self.ircClient.connect("error", self.irc_error)
                 self.ircClient.connect("connected", self.irc_connected)
                 self.ircClient.connect("disconnected", self.irc_disconnected)
                 self.ircClient.connect("message", self.irc_message)
-                self.ircClient.start()            
+                self.ircClient.start()
+                
+                irc_connect = self.builder.get_object("irc_connect")
+                irc_connect.set_sensitive(False)
                 self.append_text_chat("Probeert verbinding te maken... Even geduld a.u.b.\r\n")
             except (KeyboardInterrupt, SystemExit):
                 self.quitAll()
@@ -521,9 +523,6 @@ class OpenlaptopGui:
         chat_window.scroll_to_mark(insert_mark , 0.0, True, 0.0, 1.0)
 
     def quit(self, widget):
-        self.quitAll()
-
-    def quitEvent(self, widget, response):
         self.quitAll()
 
     def quitAll(self):

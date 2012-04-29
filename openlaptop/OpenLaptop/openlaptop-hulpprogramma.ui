@@ -493,6 +493,8 @@ Wij nemen indien nodig zo spoedig mogelijk contact met u op.</property>
     <property name="message_type">error</property>
     <property name="buttons">close</property>
     <property name="text" translatable="yes">Er is een probleem bij het opzetten van de chat</property>
+    <signal name="close" handler="on_irc_error_close" swapped="no"/>
+    <signal name="response" handler="on_irc_error_response" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox12">
         <property name="visible">True</property>
@@ -577,7 +579,6 @@ Wij nemen indien nodig zo spoedig mogelijk contact met u op.</property>
     <property name="window_position">center</property>
     <property name="icon">openlaptop-hulpprogramma.png</property>
     <signal name="destroy" handler="on_windowMain_destroy" swapped="no"/>
-    <signal name="delete-event" handler="on_windowMain_delete_event" swapped="no"/>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
