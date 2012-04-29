@@ -484,7 +484,7 @@ Wij nemen indien nodig zo spoedig mogelijk contact met u op.</property>
   <object class="GtkMessageDialog" id="irc_error">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Chat fout</property>
+    <property name="title" translatable="yes">Chat probleem</property>
     <property name="window_position">center</property>
     <property name="icon">openlaptop-hulpprogramma.png</property>
     <property name="type_hint">dialog</property>
@@ -492,16 +492,14 @@ Wij nemen indien nodig zo spoedig mogelijk contact met u op.</property>
     <property name="transient_for">windowMain</property>
     <property name="message_type">error</property>
     <property name="buttons">close</property>
-    <property name="text" translatable="yes">Er is een probleem met de chat opzetten</property>
-    <signal name="close" handler="on_irc_error_close" swapped="no"/>
-    <signal name="response" handler="on_irc_error_response" swapped="no"/>
+    <property name="text" translatable="yes">Er is een probleem bij het opzetten van de chat</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox3">
+      <object class="GtkVBox" id="dialog-vbox12">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area3">
+          <object class="GtkHButtonBox" id="dialog-action_area12">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>

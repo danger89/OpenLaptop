@@ -205,36 +205,41 @@ class IRCClient (threading.Thread, IdleObject):
             self.socket.send('JOIN ' + self.channel + '\r\n')
         except socket.error, msg:
             self.socket = None
-            self.error_message = msg            
+            self.error_message = "Kon geen verbinding maken, probeer het later nogmaals."            
             self.emit("error")
 
         while not self.cancelled:
-            readbuffer=readbuffer+self.socket.recv(1024)
-            temp=string.split(readbuffer, "\n")
-            readbuffer=temp.pop( )
+            if self.socket:
+                readbuffer=readbuffer+self.socket.recv(1024)
+                temp=string.split(readbuffer, "\n")
+                readbuffer=temp.pop( )
 
-            for line in temp:                
-                print "DEBUG: ", line
-                if line.find('PING') != -1:
-                    self.socket.send('PONG ' + self.host + '\r\n')
-                elif line.find('End of /MOTD command.') != -1:
-                    self.socket.send('privmsg ' + self.channel + ' :\x01ACTION ' + self.welcome_message + '\x01\n')                    
-                    self.emit("connected")
-                elif line.find('Nickname is already in use.') != -1:
-                    self.error_message = "Uw bijnaam is al in gebruik, probeer a.u.b. een andere naam."
-                    self.emit("error")
-                elif line.find('PRIVMSG ' + self.nickname) != -1:            
-                    nick = line.split ( '!' ) [ 0 ].replace ( ':', '')
-                    if nick == self.user:
-                        nick = self.realname
+                for line in temp:                
+                    #print "DEBUG: ", line
+                    if line.find('PING') != -1:
+                        self.socket.send('PONG ' + self.host + '\r\n')
+                    elif line.find('End of /MOTD command.') != -1:
+                        self.socket.send('privmsg ' + self.channel + ' :\x01ACTION ' + self.welcome_message + '\x01\n')                    
+                        self.emit("connected")
+                    elif line.find('Nickname is already in use.') != -1:
+                        self.error_message = "Uw bijnaam is al in gebruik, probeer a.u.b. een andere naam."
+                        self.emit("error")
+                        break
+                    elif line.find('PRIVMSG ' + self.nickname) != -1:            
+                        nick = line.split ( '!' ) [ 0 ].replace ( ':', '')
+                        if nick == self.user:
+                            nick = self.realname
 
-                    index = line.find(':', 1) + 1
-                    receive_message = line[index:]
-                    self.message = nick + ': ' + receive_message
-                    self.emit("message")
-                elif line.find(self.user + ' :No such nick' ) != -1:
-                    self.error_message = "Sorry, ik ben op dit moment niet online. Probeer het later a.u.b. nogmaals."
-                    self.emit("error")
+                        index = line.find(':', 1) + 1
+                        receive_message = line[index:]
+                        self.message = nick + ': ' + receive_message
+                        self.emit("message")
+                    elif line.find(self.user + ' :No such nick' ) != -1:
+                        self.error_message = "Sorry, ik ben op dit moment niet online. Probeer het later a.u.b. nogmaals."
+                        self.emit("error")
+            else:
+                break
+        # While loop stopped so disconnect
         self.emit("disconnected")
 
 class OpenlaptopGui:
@@ -425,7 +430,9 @@ class OpenlaptopGui:
             about.hide()
 
     def irc_error(self, thread):
-        self.show_irc_error(thread.error_message)
+        irc_error = self.builder.get_object("irc_error")
+        irc_error.format_secondary_text(thread.error_message)
+        irc_error.run()
 
     def show_irc_error(self, message):
         irc_error = self.builder.get_object("irc_error")
@@ -480,7 +487,7 @@ class OpenlaptopGui:
         else:
             try:
                 self.ircClient = IRCClient('irc.freenode.net', 6667, '#openlaptop', nickname)
-                self.ircClient.daemon=True
+                #self.ircClient.daemon=True
                 self.ircClient.connect("error", self.irc_error)
                 self.ircClient.connect("connected", self.irc_connected)
                 self.ircClient.connect("disconnected", self.irc_disconnected)
@@ -489,6 +496,8 @@ class OpenlaptopGui:
                 self.append_text_chat("Probeert verbinding te maken... Even geduld a.u.b.\r\n")
             except (KeyboardInterrupt, SystemExit):
                 self.quitAll()
+            except:
+                self.disconnectIRC()
 
     def irc_chat_message(self, widget):        
         chat_message = self.builder.get_object("chat_message")
