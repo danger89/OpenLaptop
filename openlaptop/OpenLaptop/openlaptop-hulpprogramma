@@ -10,6 +10,8 @@ from smtplib import SMTPException
 from datetime import datetime
 from email.mime.text import MIMEText
 import base64, re
+import socket
+import string
 
 try:  
     import pygtk  
@@ -24,7 +26,7 @@ except:
 
 import gobject
 gobject.threads_init()
-#gtk.gdk.threads_init()
+gtk.gdk.threads_init()
 
 class IdleObject(gobject.GObject):
     """
@@ -150,6 +152,89 @@ class SendMessage (threading.Thread, IdleObject):
 
             gtk.gdk.threads_leave()
 
+#http://oreilly.com/pub/h/1968
+class IRCClient (threading.Thread, IdleObject):
+
+    __gsignals__ =  { 
+            "error": (
+                gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, []),   
+            "connected": (
+                gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, []),
+            "disconnected": (
+                gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, []),
+            "message": (
+                gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, [])
+            }
+
+    def __init__( self, host, port, channel, nickname):
+        threading.Thread.__init__(self)
+        IdleObject.__init__(self)
+        self.socket = None
+        self.cancelled = False
+        self.host = host
+        self.port = port
+        self.channel = channel
+        if len(nickname) > 16:
+            self.nickname = nickname[:16]
+        else:
+            self.nickname = nickname
+        self.user = "danger89"
+        self.realname = "Melroy van den Berg (Eigenaar)"
+        self.welcome_message = "maakt verbinding met het OpenLaptop channel via OpenLaptop hulpprogramma."
+        self.error_message = ""
+        self.message = ""
+
+    def disconnect(self):
+        self.cancelled = True
+        if self.socket:  
+            self.socket.shutdown(2)
+            self.socket.close()
+
+    def send_message(self, message):
+        if self.socket:  
+            print "message: " , message              
+            self.socket.send('PRIVMSG ' + self.user + ' ' + message + '\r\n')
+
+    def run(self):
+        readbuffer = ""
+        try:
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.socket.connect((self.host, self.port))
+
+            self.socket.send('NICK ' + self.nickname + ' \r\n')
+            self.socket.send('USER ' + self.nickname + ' ' + self.nickname + ' ' + self.nickname + ' :OpenLaptop Gebruiker\r\n')
+            self.socket.send('JOIN ' + self.channel + '\r\n')
+            self.emit("connected")
+        except socket.error, msg:
+            self.socket = None
+            self.error_message = msg            
+            self.emit("error")
+
+        while not self.cancelled:
+            readbuffer=readbuffer+self.socket.recv(1024)
+            temp=string.split(readbuffer, "\n")
+            readbuffer=temp.pop( )
+
+            for line in temp:                
+                print "DEBUG: ", line
+                if line.find('PING') != -1:
+                    self.socket.send('PONG ' + self.host + '\r\n')
+                elif line.find('End of /MOTD command.') != -1:
+                    self.socket.send('privmsg ' + self.channel + ' :\x01ACTION ' + self.welcome_message + '\x01\n')
+                elif line.find('PRIVMSG ' + self.nickname) != -1:            
+                    nick = line.split ( '!' ) [ 0 ].replace ( ':', '')
+                    if nick == self.user:
+                        nick = self.realname
+
+                    index = line.find(':', 1) + 1
+                    receive_message = line[index:]
+                    self.message = nick + ': ' + receive_message                    
+                    self.emit("message")
+                elif line.find(self.user + ' :No such nick' ) != -1:
+                    self.error_message = "Sorry, ik ben op dit moment niet online. Probeer het later a.u.b. nogmaals."
+                    self.emit("error")
+        self.emit("disconnected")
+
 class OpenlaptopGui:
 
     #####################
@@ -180,6 +265,10 @@ class OpenlaptopGui:
             "on_send_email_clicked" : self.send_email,  
             "on_visit_website_clicked" : self.visit_website, 
             "on_about_us_activate" : self.show_about_us_dialog,
+            # IRC Channel
+            "on_irc_connect_clicked" : self.irc_connect,
+            "on_irc_disconnect_clicked" : self.irc_disconnect,
+            "on_send_chat_message_clicked" : self.irc_chat_message,
             # Dialogs
             "on_about_dialag_close" : self.hide_about_us_dialog,
             "on_about_dialag_response" : self.hide_about_us_dialog,
@@ -189,13 +278,23 @@ class OpenlaptopGui:
             "on_email_success_response" : self.hide_send_email_success,
             "on_email_error_close" : self.hide_send_email_error,
             "on_email_error_response" : self.hide_send_email_error,
+            "on_irc_error_close" : self.hide_irc_error,
+            "on_irc_error_response" : self.hide_irc_error,
             # Exit
+            "on_windowMain_delete_event" : self.quit,
             "on_exit_clicked" : self.quit,
             "on_exit_button_activate" : self.quit,      
             "on_windowMain_destroy" : self.quit,
         }
 
         self.builder.connect_signals( dic )
+        # IRC init
+        self.ircClient = None
+        # Set hostname as nickname
+        host_name = socket.gethostname()
+        if host_name:
+            nickname = self.builder.get_object("nickname")
+            nickname = nickname.set_text("gebruiker_" + host_name)
 
     def about_us(self, widget):
         new = 2 # open in a new tab, if possible
@@ -319,11 +418,103 @@ class OpenlaptopGui:
             about = self.builder.get_object("about_dialog")  
             about.hide()
 
+    def irc_error(self, thread):
+        self.show_irc_error(thread.error_message)
+
+    def show_irc_error(self, message):
+        irc_error = self.builder.get_object("irc_error")
+        irc_error.format_secondary_text(message)
+        irc_error.run()
+
+    def hide_irc_error(self, widget, response):
+        if response == gtk.RESPONSE_DELETE_EVENT or gtk.RESPONSE_CLOSE:
+            irc_error = self.builder.get_object("irc_error")
+            irc_error.format_secondary_text("")
+            irc_error.hide()
+
+    def irc_connected(self, thread):
+        entry1 = self.builder.get_object("chat_message")
+        entry2 = self.builder.get_object("send_chat_message")
+        entry3 = self.builder.get_object("irc_connect")
+        entry4 = self.builder.get_object("irc_disconnect")
+        entry1.set_sensitive(True)
+        entry1.grab_focus()
+        entry2.set_sensitive(True)
+        entry3.hide()
+        entry4.show()
+        self.append_text_chat("Verbonden!\r\n")
+
+    def irc_disconnected(self, thread):
+        entry1 = self.builder.get_object("chat_message")
+        entry2 = self.builder.get_object("send_chat_message")
+        entry3 = self.builder.get_object("irc_connect")
+        entry4 = self.builder.get_object("irc_disconnect")
+        entry1.set_sensitive(False)
+        entry2.set_sensitive(False)
+        entry3.show()
+        entry4.hide()
+
+        self.append_text_chat("Verbinding is verbroken met de server.\r\n")
+
+    def irc_message(self, thread):
+        print "Append"
+        self.append_text_chat(thread.message)
+    
+    def irc_disconnect(self, widget):
+        self.disconnectIRC()
+
+    def irc_connect(self, widget):        
+        nickname = self.builder.get_object("nickname")
+        nickname = nickname.get_text()
+        if not nickname:
+            self.show_irc_error("Vul a.u.b. uw bijnaam in.") 
+        else:
+            try:
+                self.ircClient = IRCClient('irc.freenode.net', 6667, '#openlaptop', nickname)
+                self.ircClient.daemon=True
+                self.ircClient.connect("error", self.irc_error)
+                self.ircClient.connect("connected", self.irc_connected)
+                self.ircClient.connect("disconnected", self.irc_disconnected)
+                self.ircClient.connect("message", self.irc_message)
+                self.ircClient.start()            
+                self.append_text_chat("Probeert verbinding te maken...\r\n")
+            except (KeyboardInterrupt, SystemExit):
+                self.quitAll()
+
+    def irc_chat_message(self, widget):        
+        chat_message = self.builder.get_object("chat_message")
+        text_message = chat_message.get_text()
+        if text_message:            
+            self.ircClient.send_message(text_message)
+            self.append_text_chat("Ik: " + text_message + "\r\n")
+            chat_message.set_text("")
+
+    def append_text_chat(self, text):
+        chat_window = self.builder.get_object("chat_window") 
+        textbuffer = chat_window.get_buffer()
+        textbuffer.insert(textbuffer.get_end_iter(), text)
+        self.scroll_to_end_chat()
+
+    def scroll_to_end_chat(self):
+        chat_window = self.builder.get_object("chat_window") 
+        textbuffer = chat_window.get_buffer()
+        insert_mark = textbuffer.get_insert()
+        textbuffer.place_cursor(textbuffer.get_end_iter())
+        chat_window.scroll_to_mark(insert_mark , 0.0, True, 0.0, 1.0)
+
     def quit(self, widget):
+        self.quitAll()
+
+    def quitAll(self):
+        self.disconnectIRC()        
         sys.exit(0)
 
+    def disconnectIRC(self):
+        if self.ircClient:
+            if self.ircClient.isAlive():
+                self.ircClient.disconnect()
 # Define data
-OpenlaptopGui.DEBUG=False
+OpenlaptopGui.DEBUG=True
 OpenlaptopGui.DATA_DIR="/usr/share/openlaptop/"
 
 # Run the main loop
