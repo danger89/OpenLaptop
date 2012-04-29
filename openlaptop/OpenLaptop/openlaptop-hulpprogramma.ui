@@ -692,6 +692,7 @@ Wij nemen indien nodig zo spoedig mogelijk contact met u op.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">FAQ</property>
                                 <property name="use_action_appearance">False</property>
                                 <child internal-child="accessible">
                                   <object class="AtkObject" id="open_faq-atkobject">
@@ -714,6 +715,7 @@ Wij nemen indien nodig zo spoedig mogelijk contact met u op.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Support</property>
                                 <property name="use_action_appearance">False</property>
                                 <child internal-child="accessible">
                                   <object class="AtkObject" id="open_customer_support-atkobject">
@@ -736,6 +738,7 @@ Wij nemen indien nodig zo spoedig mogelijk contact met u op.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Download handleiding</property>
                                 <property name="use_action_appearance">False</property>
                                 <child internal-child="accessible">
                                   <object class="AtkObject" id="open_manual-atkobject">
@@ -758,6 +761,7 @@ Wij nemen indien nodig zo spoedig mogelijk contact met u op.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Over OpenLaptop</property>
                                 <property name="use_action_appearance">False</property>
                                 <child internal-child="accessible">
                                   <object class="AtkObject" id="open_about_us-atkobject">
@@ -867,6 +871,7 @@ Wij nemen indien nodig zo spoedig mogelijk contact met u op.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Stap 1</property>
                                         <property name="use_action_appearance">False</property>
                                         <property name="xalign">0</property>
                                         <child internal-child="accessible">
@@ -900,6 +905,7 @@ Wij nemen indien nodig zo spoedig mogelijk contact met u op.</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="tooltip_text" translatable="yes">Stap 2</property>
                                         <property name="use_action_appearance">False</property>
                                         <property name="xalign">0</property>
                                         <child internal-child="accessible">
@@ -941,6 +947,7 @@ Wij nemen indien nodig zo spoedig mogelijk contact met u op.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Stap 3</property>
                                     <property name="use_action_appearance">False</property>
                                     <property name="xalign">0</property>
                                     <child internal-child="accessible">
@@ -975,6 +982,7 @@ Wij nemen indien nodig zo spoedig mogelijk contact met u op.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Stap 4</property>
                                     <property name="use_action_appearance">False</property>
                                     <property name="xalign">0</property>
                                     <child internal-child="accessible">
@@ -1092,44 +1100,6 @@ Wij nemen indien nodig zo spoedig mogelijk contact met u op.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkHBox" id="errorBox">
-                    <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkImage" id="image1">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="stock">gtk-dialog-warning</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="padding">25</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label17">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="xalign">0.05000000074505806</property>
-                        <property name="label" translatable="yes">Er is iets fout gegaan bij het versturen van de e-mail, 
-probeer het nogmaals a.u.b.</property>
-                      </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="padding">30</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkTable" id="table1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -1175,8 +1145,10 @@ probeer het nogmaals a.u.b.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="can_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Uw naam</property>
                         <property name="invisible_char">•</property>
                         <property name="shadow_type">out</property>
+                        <property name="invisible_char_set">True</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="secondary_icon_activatable">False</property>
                         <property name="primary_icon_sensitive">True</property>
@@ -1192,7 +1164,9 @@ probeer het nogmaals a.u.b.</property>
                       <object class="GtkEntry" id="email">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="tooltip_text" translatable="yes">Uw e-mailadres</property>
                         <property name="invisible_char">•</property>
+                        <property name="invisible_char_set">True</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="secondary_icon_activatable">False</property>
                         <property name="primary_icon_sensitive">True</property>
@@ -1264,6 +1238,7 @@ probeer het nogmaals a.u.b.</property>
                           <object class="GtkTextView" id="message">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Uw bericht</property>
                             <property name="wrap_mode">word</property>
                           </object>
                         </child>
@@ -1280,7 +1255,7 @@ probeer het nogmaals a.u.b.</property>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
                     <property name="padding">6</property>
-                    <property name="position">2</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
               </object>
@@ -1326,7 +1301,9 @@ probeer het nogmaals a.u.b.</property>
                       <object class="GtkEntry" id="nickname">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="tooltip_text" translatable="yes">Uw nickname</property>
                         <property name="invisible_char">•</property>
+                        <property name="width_chars">16</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="secondary_icon_activatable">False</property>
                         <property name="primary_icon_sensitive">True</property>
@@ -1344,6 +1321,7 @@ probeer het nogmaals a.u.b.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Maak verbinding</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_stock">True</property>
                         <signal name="clicked" handler="on_irc_connect_clicked" swapped="no"/>
@@ -1360,6 +1338,7 @@ probeer het nogmaals a.u.b.</property>
                         <property name="label">gtk-disconnect</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Verbreek verbinding</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_stock">True</property>
                         <signal name="clicked" handler="on_irc_disconnect_clicked" swapped="no"/>
@@ -1403,7 +1382,7 @@ probeer het nogmaals a.u.b.</property>
                     <child>
                       <object class="GtkTextView" id="chat_window">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
+                        <property name="can_focus">False</property>
                         <property name="editable">False</property>
                       </object>
                     </child>
@@ -1460,6 +1439,7 @@ probeer het nogmaals a.u.b.</property>
                         <property name="can_default">True</property>
                         <property name="has_default">True</property>
                         <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Verstuur bericht</property>
                         <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_send_chat_message_clicked" swapped="no"/>
                       </object>
