@@ -19,8 +19,7 @@
 OpenLaptop is een bedrijf die Laptops verkoopt met Linux
 erop geïnstalleerd.
 
-Met OpenLaptop Voorkeuren is het mogelijk om 
-uw voorkeuren betreffende OpenLaptop te wijzigen.</property>
+OpenLaptop Hulpprogramma is bedoeld om klanten beter hulp te bieden bij eventuele vragen of problemen.</property>
     <property name="website">http://www.openlaptop.nl</property>
     <property name="website_label" translatable="yes">Bezoek onze website</property>
     <property name="license" translatable="yes">                    GNU GENERAL PUBLIC LICENSE
