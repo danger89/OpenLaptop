@@ -1,3 +1,10 @@
+openlaptop (1.2ppa3) precise; urgency=low
+
+  * No Chrome installed dialog fixed
+  * Install Chromium Web Browser button added
+
+ -- Melroy van den Berg <info@openlaptop.nl>  Sun, 30 Apr 2012 13:19:00 +0100
+
 openlaptop (1.2ppa2) precise; urgency=low
 
   * Thread safe at exit
