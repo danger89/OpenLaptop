@@ -12,6 +12,7 @@ from email.mime.text import MIMEText
 import base64, re
 import socket
 import string, random
+import atexit
 
 try:  
     import pygtk  
@@ -26,7 +27,10 @@ except:
 
 import gobject
 gobject.threads_init()
-#gtk.gdk.threads_init()
+
+pobs = set()                            # set to hold the active-process objects
+pobslock = threading.Lock()     # a Lock object to make sure only one at a time can modify pobs
+
 
 class IdleObject(gobject.GObject):
     """
@@ -60,12 +64,20 @@ class BrowserThread(threading.Thread, IdleObject):
             append = ""
 
         proc = subprocess.Popen('google-chrome %U --enable-extensions ' + append + self.url, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
+        with pobslock:
+                pobs.add(proc)
         proc.wait()
+        with pobslock:
+                pobs.remove(proc)
         if proc.returncode == 0:
             self.returnValue = True
         else:
             proc = subprocess.Popen('chromium-browser %U --enable-extensions ' + append + self.url, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
+            with pobslock:
+                    pobs.add(proc)
             proc.wait()
+            with pobslock:
+                    pobs.remove(proc)
             if proc.returncode == 0:            
                 self.returnValue =  True
             else:       
@@ -120,6 +132,7 @@ class SendMessage (threading.Thread, IdleObject):
             pwd = base64.b64decode(ciph)
             text_subtype = 'plain'
 
+            # Todo: time-out?
             pub_ip = urllib2.urlopen("http://automation.whatismyip.com/n09230945.asp").read()
             content = self.message + "\n\r\n\rVerzonden vanaf IP-adres: " + pub_ip
 
@@ -330,24 +343,40 @@ class OpenlaptopGui:
         webbrowser.open(url,new=new)       
 
     def step1(self, widget):
-        thread = BrowserThread(False, "https://accounts.google.com/SignUp?continue=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fgbchcmhmhahfdphkhkmpfmihenigjmpp")
-        thread.connect("completed", self.thread_finished)
-        thread.start()
+        try:
+            thread = BrowserThread(False, "https://accounts.google.com/SignUp?continue=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fgbchcmhmhahfdphkhkmpfmihenigjmpp")
+            thread.daemon=True
+            thread.connect("completed", self.thread_finished)
+            thread.start()
+        except (KeyboardInterrupt, SystemExit):
+            self.quitAll()
 
     def step2(self, widget):
-        thread = BrowserThread(False, "https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fgbchcmhmhahfdphkhkmpfmihenigjmpp")
-        thread.connect("completed", self.thread_finished)
-        thread.start()
+        try:
+            thread = BrowserThread(False, "https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fgbchcmhmhahfdphkhkmpfmihenigjmpp")
+            thread.daemon=True
+            thread.connect("completed", self.thread_finished)
+            thread.start()
+        except (KeyboardInterrupt, SystemExit):
+            self.quitAll()
 
     def step3(self, widget):
-        thread = BrowserThread(False, "https://chrome.google.com/webstore/detail/gbchcmhmhahfdphkhkmpfmihenigjmpp")
-        thread.connect("completed", self.thread_finished)
-        thread.start()
+        try:
+            thread = BrowserThread(False, "https://chrome.google.com/webstore/detail/gbchcmhmhahfdphkhkmpfmihenigjmpp")
+            thread.daemon=True
+            thread.connect("completed", self.thread_finished)
+            thread.start()
+        except (KeyboardInterrupt, SystemExit):
+            self.quitAll()
 
     def step4(self, widget):
-        thread = BrowserThread(True, "gbchcmhmhahfdphkhkmpfmihenigjmpp")
-        thread.connect("completed", self.thread_finished)
-        thread.start()
+        try:
+            thread = BrowserThread(True, "gbchcmhmhahfdphkhkmpfmihenigjmpp")
+            thread.daemon=True
+            thread.connect("completed", self.thread_finished)
+            thread.start()
+        except (KeyboardInterrupt, SystemExit):
+            self.quitAll()
 
     def thread_finished(self, thread):
         if not thread.returnValue:
@@ -526,15 +555,22 @@ class OpenlaptopGui:
         self.quitAll()
 
     def quitAll(self):
-        self.disconnectIRC()        
+        self.disconnectIRC()  
+        self.cleanup_processes()      
         sys.exit(0)
+    
+    def cleanup_processes(self):
+        with pobslock:
+            for p in pobs:
+                p.kill()
 
     def disconnectIRC(self):
         if self.ircClient:
             if self.ircClient.isAlive():
                 self.ircClient.disconnect()
+
 # Define data
-OpenlaptopGui.DEBUG=True
+OpenlaptopGui.DEBUG=False
 OpenlaptopGui.DATA_DIR="/usr/share/openlaptop/"
 
 # Run the main loop

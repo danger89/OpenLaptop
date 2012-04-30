@@ -12,7 +12,7 @@
     <property name="transient_for">windowMain</property>
     <property name="opacity">0.90000000000000002</property>
     <property name="program_name">OpenLaptop</property>
-    <property name="version">v1.1.1</property>
+    <property name="version">v1.2</property>
     <property name="copyright" translatable="yes">© Copyright 2011-2012 Melroy van den Berg - OpenLaptop</property>
     <property name="comments" translatable="yes">Bedankt dat u gekozen heeft voor OpenLaptop.
 
