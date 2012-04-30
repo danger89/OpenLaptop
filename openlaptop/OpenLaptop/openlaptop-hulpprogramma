@@ -575,7 +575,7 @@ class OpenlaptopGui:
                 self.ircClient.disconnect()
 
 # Define data
-OpenlaptopGui.DEBUG=True
+OpenlaptopGui.DEBUG=False
 OpenlaptopGui.DATA_DIR="/usr/share/openlaptop/"
 
 # Run the main loop
