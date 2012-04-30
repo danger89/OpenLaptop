@@ -278,7 +278,8 @@ class OpenlaptopGui:
             "on_step1_clicked" : self.step1,  
             "on_step2_clicked" : self.step2, 
             "on_step3_clicked" : self.step3,  
-            "on_step4_clicked" : self.step4,    
+            "on_step4_clicked" : self.step4,
+            "on_install_chrome_clicked" : self.install_chrome,  
             # Contact email
             "on_clear_clicked" : self.clear,
             "on_send_email_clicked" : self.send_email,  
@@ -380,7 +381,7 @@ class OpenlaptopGui:
 
     def thread_finished(self, thread):
         if not thread.returnValue:
-            self.show_error_no_chrome()
+            self.show_no_chrome_error()
 
     def send_email(self, widget):
         entry1 = self.builder.get_object("name")        
@@ -446,6 +447,10 @@ class OpenlaptopGui:
         if response == gtk.RESPONSE_DELETE_EVENT or gtk.RESPONSE_CLOSE:
             no_chrome = self.builder.get_object("no_chrome")
             no_chrome.hide()
+
+    def install_chrome(self, widget):
+        url = "apt://chromium-browser"
+        webbrowser.open(url)
 
     def show_about_us_dialog(self, widget):
         about = self.builder.get_object("about_dialog")   
@@ -570,7 +575,7 @@ class OpenlaptopGui:
                 self.ircClient.disconnect()
 
 # Define data
-OpenlaptopGui.DEBUG=False
+OpenlaptopGui.DEBUG=True
 OpenlaptopGui.DATA_DIR="/usr/share/openlaptop/"
 
 # Run the main loop
