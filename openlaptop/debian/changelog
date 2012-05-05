@@ -1,3 +1,10 @@
+openlaptop (1.2ppa5) precise; urgency=low
+
+  * IRC with colors
+  * IRC send button focus fixed
+
+ -- Melroy van den Berg <info@openlaptop.nl>  Sun, 5 May 2012 15:48:00 +0100
+
 openlaptop (1.2ppa4) precise; urgency=low
 
   * Debug off
