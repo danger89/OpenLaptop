@@ -13,6 +13,7 @@ import base64, re
 import socket
 import string, random
 import atexit
+import pango
 
 try:  
     import pygtk  
@@ -320,8 +321,8 @@ class OpenlaptopGui:
         # IRC stuff
         self.ircClient = None
         chat_window_textbuffer = self.builder.get_object("chat_window").get_buffer()
-        client_tag = chat_window_textbuffer.create_tag("client", foreground="#CC0000")
-        me_tag = chat_window_textbuffer.create_tag("me", foreground="#204A87")
+        client_tag = chat_window_textbuffer.create_tag("client", foreground="#CC0000", weight=pango.WEIGHT_BOLD)
+        me_tag = chat_window_textbuffer.create_tag("me", foreground="#204A87", weight=pango.WEIGHT_BOLD)
         info_tag = chat_window_textbuffer.create_tag("info", foreground="#D09613")
 
         # Set hostname as nickname
