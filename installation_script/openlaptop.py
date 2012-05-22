@@ -112,8 +112,9 @@ def install_packages():
     codecs = ' ubuntu-restricted-extras flashplugin-installer gstreamer0.10-ffmpeg gstreamer0.10-fluendo-mp3 gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly gstreamer0.10-plugins-bad-multiverse icedtea6-plugin libavcodec-extra-53 libmp4v2-2'
     archive = ' rar unrar'
     language = ' language-pack-nl language-pack-gnome-nl firefox-locale-nl'
+    webcam = ' cheese cheese-common'
     remaining = ' chromium-browser vlc desktop-webmail nautilus-open-terminal synaptic'
-    packages =  codecs + archive + language + remaining
+    packages =  codecs + archive + language + webcam + remaining
 
     proc = subprocess.Popen('apt-get install -y ' + packages, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
 
