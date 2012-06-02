@@ -83,6 +83,12 @@ def install_packages():
     print "Done"
     print "\n\n"
 
+    print "Add OpenLaptop PPA..."
+    proc = subprocess.Popen('add-apt-repository ppa:openlaptop/stable', shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
+    proc.wait()
+    print "Done"
+    print "\n\n"
+
     print "### Installing packages ###\n"
     print "Update package list..."
     proc = subprocess.Popen('apt-get update', shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
@@ -114,7 +120,8 @@ def install_packages():
     language = ' language-pack-nl language-pack-gnome-nl firefox-locale-nl'
     webcam = ' cheese cheese-common'
     remaining = ' chromium-browser vlc desktop-webmail nautilus-open-terminal synaptic'
-    packages =  codecs + archive + language + webcam + remaining
+    openlaptop = ' openlaptop'
+    packages =  codecs + archive + language + webcam + remaining + openlaptop
 
     proc = subprocess.Popen('apt-get install -y ' + packages, shell=True, stdin=None, stdout=PIPE, stderr=STDOUT, executable="/bin/bash")
 
