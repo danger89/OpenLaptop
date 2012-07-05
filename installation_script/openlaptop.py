@@ -116,7 +116,7 @@ def install_packages():
 
     # No packages (anymore): gstreamer0.10-plugins-ugly-multiverse
     codecs = ' ubuntu-restricted-extras flashplugin-installer gstreamer0.10-ffmpeg gstreamer0.10-fluendo-mp3 gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly gstreamer0.10-plugins-bad-multiverse icedtea6-plugin libavcodec-extra-53 libmp4v2-2'
-    archive = ' rar unrar'
+    archive = ' rar unrar zip p7zip-full libarchive12'
     language = ' language-pack-nl language-pack-gnome-nl firefox-locale-nl'
     webcam = ' cheese cheese-common'
     remaining = ' chromium-browser vlc desktop-webmail nautilus-open-terminal synaptic'
